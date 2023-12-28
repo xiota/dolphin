@@ -81,6 +81,32 @@ void ElfModLoader::write_cvar_val(CVarVal var, u32 addr) {
   }
 }
 
+void ElfModLoader::read_cvar(CVar& var) {
+  switch (var.type) {
+    case CVarType::INT8:
+      var.value = read8(var.addr);
+      break;
+    case CVarType::INT16:
+      var.value = read16(var.addr);
+      break;
+    case CVarType::INT32:
+      var.value = read32(var.addr);
+      break;
+    case CVarType::INT64:
+      var.value = read64(var.addr);
+      break;
+    case CVarType::FLOAT32:
+      var.value = readf32(var.addr);
+      break;
+    case CVarType::FLOAT64:
+      var.value = readf64(var.addr);
+      break;
+    case CVarType::BOOLEAN:
+      var.value = static_cast<bool>(read8(var.addr));
+      break;
+  }
+}
+
 void ElfModLoader::run_mod(Game game, Region region) {
   const auto load_mod = [this] {
     std::string pending_elf = GetPendingModfile();
@@ -474,6 +500,7 @@ void ElfModLoader::parse_and_load_modfile(std::string const& path) {
     resolve_symbols([this, &cvar] (Symbol* cvar_sym) {
         cvar_map[cvar.name] = cvar;
         cvar_map[cvar.name].addr = cvar_sym->address;
+        read_cvar(cvar_map[cvar.name]);
       }, cvar.name);
   }
 

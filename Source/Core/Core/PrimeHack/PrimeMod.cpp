@@ -156,6 +156,14 @@ float PrimeMod::readf32(u32 addr) const {
   return Common::BitCast<float>(read32(addr));
 }
 
+double PrimeMod::readf64(u32 addr) const {
+  if (active_guard == nullptr) {
+    WARN_LOG_FMT(POWERPC, "Attempted active mod code outside of critical section");
+    return 0;
+  }
+  return Common::BitCast<double>(read64(addr));
+}
+
 void PrimeMod::write8(u8 var, u32 addr) const {
   if (active_guard == nullptr) {
     WARN_LOG_FMT(POWERPC, "Attempted active mod code outside of critical section");

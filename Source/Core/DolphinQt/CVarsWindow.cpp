@@ -16,7 +16,6 @@
 #include <fstream>
 
 CVarListModel::CVarListModel(QObject* parent) : QAbstractTableModel(parent) {
-  load_cvars();
   update_cvar_cache();
 }
 
@@ -37,6 +36,7 @@ void CVarListModel::get_column_widths(QFont const& font, std::array<int, CVarLis
 }
 
 void CVarListModel::update_cvar_cache() {
+  load_cvars();
   cached_vals.clear();
   const auto get_value = [](prime::CVar const& var) -> QVariant {
     if (uint8_t const* val = std::get_if<uint8_t>(&var.value); val != nullptr) {
@@ -145,6 +145,7 @@ int CVarListModel::columnCount(const QModelIndex& parent) const {
 }
 
 void CVarListModel::load_cvars() {
+  cvar_list.clear();
   prime::ElfModLoader* mod = static_cast<prime::ElfModLoader*>(prime::GetHackManager()->get_mod("elf_mod_loader"));
   if (mod == nullptr) {
     return;

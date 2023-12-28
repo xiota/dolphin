@@ -92,6 +92,7 @@ private:
   void clear_active_mod();
 
   void write_cvar_val(CVarVal val, u32 addr);
+  void read_cvar(CVar& var);
 
   // void clear_modinfo_from_ram();
   // void write_modinfo_to_ram();

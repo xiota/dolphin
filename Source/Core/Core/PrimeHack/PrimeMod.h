@@ -108,6 +108,7 @@ protected:
   u32 readi(u32 addr) const;
   u64 read64(u32 addr) const;
   float readf32(u32 addr) const;
+  double readf64(u32 addr) const;
   void write8(u8 var, u32 addr) const;
   void write16(u16 var, u32 addr) const;
   void write32(u32 var, u32 addr) const;
