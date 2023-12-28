@@ -19,7 +19,7 @@ namespace Common
 
 const std::string& GetScmRevStr()
 {
-  static const std::string scm_rev_str = "PrimeHack Release [v1.0.7]";
+  static const std::string scm_rev_str = "PrimeHack Release [v1.0.7a]";
   return scm_rev_str;
 }
 
