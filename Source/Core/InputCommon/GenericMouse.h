@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <memory>
 
 extern int win_w, win_h;
 
@@ -10,6 +11,7 @@ namespace prime
 class GenericMouse
 {
 public:
+  virtual ~GenericMouse() = default;
   // Platform dependant implementations are made virtual
   virtual void UpdateInput() = 0;
   virtual void LockCursorToGameWindow() = 0;
@@ -31,6 +33,6 @@ public:
   void LockCursorToGameWindow() override {}
 };
 
-extern GenericMouse* g_mouse_input;
+extern std::unique_ptr<GenericMouse> g_mouse_input;
 
 }  // namespace prime
