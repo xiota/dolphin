@@ -42,6 +42,7 @@
 #include "Core/NetPlayClient.h"
 #include "Core/NetPlayServer.h"
 #include "Core/System.h"
+#include "Core/PrimeHack/HackConfig.h"
 
 #include "DolphinQt/Host.h"
 #include "DolphinQt/QtUtils/QueueOnObject.h"
@@ -427,6 +428,10 @@ void Settings::SetCursorVisibility(Config::ShowCursor hideCursor)
 
 Config::ShowCursor Settings::GetCursorVisibility() const
 {
+  if (!prime::ControllerMode()) {
+    return Config::ShowCursor::Never;
+  }
+
   return Config::Get(Config::MAIN_SHOW_CURSOR);
 }
 
@@ -438,7 +443,11 @@ void Settings::SetLockCursor(bool lock_cursor)
 
 bool Settings::GetLockCursor() const
 {
-  return Config::Get(Config::MAIN_LOCK_CURSOR);
+  if (prime::ControllerMode()) {
+    return Config::Get(Config::MAIN_LOCK_CURSOR);
+  }
+
+  return true;
 }
 
 void Settings::SetKeepWindowOnTop(bool top)
@@ -559,6 +568,20 @@ void Settings::SetCheatsEnabled(bool enabled)
   {
     Config::SetBaseOrCurrent(Config::MAIN_ENABLE_CHEATS, enabled);
     emit EnableCheatsChanged(enabled);
+  }
+}
+
+bool Settings::GetPrimeEnabled() const
+{
+  return Config::Get(Config::PRIMEHACK_ENABLE);
+}
+
+void Settings::SetPrimeEnabled(bool enabled)
+{
+  if (Config::Get(Config::PRIMEHACK_ENABLE) != enabled)
+  {
+    Config::SetBaseOrCurrent(Config::PRIMEHACK_ENABLE, enabled);
+    emit EnablePrimeChanged(enabled);
   }
 }
 

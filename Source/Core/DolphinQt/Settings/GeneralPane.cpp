@@ -92,6 +92,8 @@ void GeneralPane::OnEmulationStateChanged(Core::State state)
 #else   // USE_RETRO_ACHIEVEMENTS
   m_checkbox_cheats->setEnabled(!running);
 #endif  // USE_RETRO_ACHIEVEMENTS
+  m_checkbox_primehack->setEnabled(!running);
+
   m_checkbox_override_region_settings->setEnabled(!running);
 #ifdef USE_DISCORD_PRESENCE
   m_checkbox_discord_presence->setEnabled(!running);
@@ -105,6 +107,7 @@ void GeneralPane::ConnectLayout()
   connect(m_checkbox_cheats, &QCheckBox::toggled, this, &GeneralPane::OnSaveConfig);
   connect(m_checkbox_override_region_settings, &QCheckBox::stateChanged, this,
           &GeneralPane::OnSaveConfig);
+  connect(m_checkbox_primehack, &QCheckBox::toggled, this, &GeneralPane::OnSaveConfig);
   connect(m_checkbox_auto_disc_change, &QCheckBox::toggled, this, &GeneralPane::OnSaveConfig);
 #ifdef USE_DISCORD_PRESENCE
   connect(m_checkbox_discord_presence, &QCheckBox::toggled, this, &GeneralPane::OnSaveConfig);
@@ -150,6 +153,11 @@ void GeneralPane::CreateBasic()
   m_checkbox_cheats = new QCheckBox(tr("Enable Cheats"));
   basic_group_layout->addWidget(m_checkbox_cheats);
 
+  m_checkbox_primehack = new QCheckBox(tr("Toggle PrimeHack Controls"));
+  m_checkbox_primehack->setToolTip(QString::fromStdString("Toggle PrimeHack controls on or off. PrimeHack GFX will still work."));
+
+  basic_group_layout->addWidget(m_checkbox_primehack);
+
   m_checkbox_override_region_settings = new QCheckBox(tr("Allow Mismatched Region Settings"));
   basic_group_layout->addWidget(m_checkbox_override_region_settings);
 
@@ -194,6 +202,8 @@ void GeneralPane::CreateAutoUpdate()
   auto_update_group_layout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
 
   m_combobox_update_track = new QComboBox(this);
+  m_combobox_update_track->setEnabled(false);
+  m_combobox_update_track->setToolTip(QString::fromStdString("Disabled by PrimeHack"));
 
   auto_update_group_layout->addRow(tr("&Auto Update:"), m_combobox_update_track);
 
@@ -267,6 +277,7 @@ void GeneralPane::LoadConfig()
 #endif
   SignalBlocking(m_checkbox_dualcore)->setChecked(Config::Get(Config::MAIN_CPU_THREAD));
   SignalBlocking(m_checkbox_cheats)->setChecked(Settings::Instance().GetCheatsEnabled());
+  SignalBlocking(m_checkbox_primehack)->setChecked(Settings::Instance().GetPrimeEnabled());
   SignalBlocking(m_checkbox_override_region_settings)
       ->setChecked(Config::Get(Config::MAIN_OVERRIDE_REGION_SETTINGS));
   SignalBlocking(m_checkbox_auto_disc_change)
@@ -293,9 +304,9 @@ void GeneralPane::LoadConfig()
     SignalBlocking(m_combobox_fallback_region)->setCurrentIndex(FALLBACK_REGION_NTSCJ_INDEX);
 }
 
-static QString UpdateTrackFromIndex(int index)
-{
-  QString value;
+  static QString UpdateTrackFromIndex(int index)
+  {
+    QString value;
 
   switch (index)
   {
@@ -359,6 +370,7 @@ void GeneralPane::OnSaveConfig()
 #endif
   Config::SetBaseOrCurrent(Config::MAIN_CPU_THREAD, m_checkbox_dualcore->isChecked());
   Settings::Instance().SetCheatsEnabled(m_checkbox_cheats->isChecked());
+  Settings::Instance().SetPrimeEnabled(m_checkbox_primehack->isChecked());
   Config::SetBaseOrCurrent(Config::MAIN_OVERRIDE_REGION_SETTINGS,
                            m_checkbox_override_region_settings->isChecked());
   Config::SetBase(Config::MAIN_AUTO_DISC_CHANGE, m_checkbox_auto_disc_change->isChecked());
